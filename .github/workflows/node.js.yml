@@ -36,6 +36,6 @@ jobs:
     - name: Get test cases and duration
       run: |
         # Call the external API to get relevant tests for a given list of changed files
-        test_suite=$(curl -X POST https://tests-selection.azurewebsites.net/api -H "Content-Type: application/json" -d @changed_files.json)
+        test_suite=$(curl -X POST https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json" -d @changed_files.json)
         echo "::set-output name=test_suite"::"$test_suite"  # Set output variable for next step
 
