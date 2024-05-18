@@ -51,6 +51,11 @@ class UserService {
       lName: sanitizedLastName,
     };
   }
+
+  getFullName(firstName, middleName, lastName)
+  {
+    return firstName + " " + middleName + " " + lastName
+  }
 }
 
 module.exports = new UserService();
