@@ -40,13 +40,13 @@ jobs:
         json: true
         write_output_files: true
 
-    - name: Verify the contents of the .github/outputs/added_files.json file
+    - name: Verify the contents of the .github/outputs/all_changed_and_modified_files.json file
       run: |
-        cat .github/outputs/added_files.json
+        cat .github/outputs/all_changed_and_modified_files.json
 
     - name: Get test cases and duration
       run: |
         # Call the external API to get relevant tests for a given list of changed files
-        test_suite=$(curl -X POST https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json" -d @.github/outputs/added_files.json)
+        test_suite=$(curl -X POST https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json" -d @.github/outputs/all_changed_and_modified_files.json)
         echo "::set-output name=test_suite"::"$test_suite"  # Set output variable for next step
 

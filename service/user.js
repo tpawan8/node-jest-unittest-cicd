@@ -52,6 +52,7 @@ class UserService {
     };
   }
 
+  // modifying for the sake of it
   getFullName(firstName, middleName, lastName)
   {
     return firstName + " " + middleName + " " + lastName
