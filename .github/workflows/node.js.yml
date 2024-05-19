@@ -48,7 +48,7 @@ jobs:
       id: get_test_data
       run: |
         # Call the external API to get relevant tests for a given list of changed files
-        test_suite=$(curl -X POST https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
+        test_suite=$(curl -X GET https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
         echo "test_suite=$test_suite" >> "$GITHUB_OUTPUT"  # Set output variable for next step
 
     - name: Shard tests
