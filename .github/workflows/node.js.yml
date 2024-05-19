@@ -53,12 +53,12 @@ jobs:
         echo "
         [
           {
-            \"test_name\": \"name_1\",
-             \"time\": 5
+            \"test\": \"name_1\",
+             \"duration\": 5
             },
             {
-              \"test_name\": \"name_2\",
-               \"time\": 10
+              \"test\": \"name_2\",
+               \"duration\": 10
             }
           ]" > test_data.json
         cat test_data.json
@@ -68,5 +68,6 @@ jobs:
     - name: Shard tests
       run: |
         # Invoke the shardinbg script passing result of previous call to shard the test cases
-        testShards=$(node .github/workflows/sharding.js <<< ${{steps.get_test_data.outputs.test_suite}} 10*10^6)
+        testShards=$(node .github/workflows/sharding.js <<< $(<test_data.json) 7)
+        echo $testShards
         echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
