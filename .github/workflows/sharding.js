@@ -20,4 +20,6 @@ function shardTests(tests, maxShardDuration) {
     console.log(shards);
     return shards;
   }
-  
+
+const process = require('process')
+shardTests(process.argv[2], process.argv[3]);
