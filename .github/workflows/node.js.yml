@@ -45,8 +45,14 @@ jobs:
         cat .github/outputs/all_changed_and_modified_files.json
 
     - name: Get test cases and duration
+      id: get_test_data
       run: |
         # Call the external API to get relevant tests for a given list of changed files
-        test_suite=$(curl -X POST https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json" -d @.github/outputs/all_changed_and_modified_files.json)
+        test_suite=$(curl -X POST https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
         echo "::set-output name=test_suite"::"$test_suite"  # Set output variable for next step
 
+    - name: Shard tests
+      run: |
+        # Invoke the shardinbg script passing result of previous call to shard the test cases
+        testShards =$(node sharding.js <<< ${{steps.get_test_data.outputs.test_suite}} 10)
+        echo "::set-output name=test_shards"::"$testShards"
