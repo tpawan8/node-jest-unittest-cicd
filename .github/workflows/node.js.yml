@@ -49,7 +49,7 @@ jobs:
       run: |
         # Call the external API to get relevant tests for a given list of changed files
         test_suite=$(curl -X GET https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
-        echo "test_suite=$test_suite" >> "$GITHUB_OUTPUT"  # Set output variable for next step
+        echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
 
     - name: Shard tests
       run: |
