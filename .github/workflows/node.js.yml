@@ -49,7 +49,7 @@ jobs:
       run: |
         # Call the external API to get relevant tests for a given list of changed files
         test_suite=$(curl -X GET https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
-        touch test_suite.json
+        touch test_data.json
         echo "
         [
           {
@@ -61,14 +61,12 @@ jobs:
                \"time\": 10
             }
           ]" > test_data.json
-        # echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
+        cat test_data.json
 
-    - name: Verify the contents of the .github/outputs/all_changed_and_modified_files.json file
-      run: |
-        cat .github/outputs/test_data.json
+        # echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
 
     - name: Shard tests
       run: |
         # Invoke the shardinbg script passing result of previous call to shard the test cases
-        testShards =$(node .github/workflows/sharding.js <<< ${{steps.get_test_data.outputs.test_suite}} 10)
+        testShards =$(node .github/workflows/sharding.js <<< ${{steps.get_test_data.outputs.test_suite}} 10*10^6)
         echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
