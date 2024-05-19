@@ -69,5 +69,6 @@ jobs:
       run: |
         # Invoke the shardinbg script passing result of previous call to shard the test cases
         testShards=$(node .github/workflows/sharding.js <<< $(<test_data.json) 7)
-        echo $testShards
+        echo "$testShards"
         echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
+        # run specific playwright tests npx playwright test -g "add a todo item"
