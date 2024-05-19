@@ -16,7 +16,8 @@ function shardTests(tests, maxShardDuration) {
     if (currentShard.tests.length > 0) {
       shards.push(currentShard);
     }
-  
+    
+    console.log(shards);
     return shards;
   }
   

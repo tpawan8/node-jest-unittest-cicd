@@ -20,55 +20,51 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Install dependencies
+        run: npm ci
+      - name: Build project
+        run: npm run build --if-present
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: 'npm'
+      - name: Get changed files and write the outputs to a JSON file
+        id: changed-files-write-output-files-json
+        uses: tj-actions/changed-files@v44
+        with:
+          json: true
+          write_output_files: true
 
-    - run: npm ci
+      - name: Verify the contents of the .github/outputs/all_changed_and_modified_files.json file
+        run: |
+          cat .github/outputs/all_changed_and_modified_files.json
 
-    - run: npm run build --if-present
-
-    - name: Get changed files and write the outputs to a JSON file
-      id: changed-files-write-output-files-json
-      uses: tj-actions/changed-files@v44
-      with:
-        json: true
-        write_output_files: true
-
-    - name: Verify the contents of the .github/outputs/all_changed_and_modified_files.json file
-      run: |
-        cat .github/outputs/all_changed_and_modified_files.json
-
-    - name: Get test cases and duration
-      id: get_test_data
-      run: |
-        # Call the external API to get relevant tests for a given list of changed files
-        test_suite=$(curl -X GET https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
-        touch test_data.json
-        echo "
-        [
-          {
-            \"test\": \"name_1\",
-             \"duration\": 5
-            },
+      - name: Get test cases and duration
+        id: get_test_data
+        run: |
+          # Call the external API to get relevant tests for a given list of changed files
+          test_suite=$(curl -X GET https://api.github.com/users/mralexgray/repos -H "Content-Type: application/json") #-d @.github/outputs/all_changed_and_modified_files.json)
+          touch test_data.json
+          echo "
+          [
             {
-              \"test\": \"name_2\",
-               \"duration\": 10
-            }
-          ]" > test_data.json
-        cat test_data.json
+              \"test\": \"name_1\",
+              \"duration\": 5
+              },
+              {
+                \"test\": \"name_2\",
+                \"duration\": 10
+              }
+            ]" > test_data.json
+          cat test_data.json
 
-        # echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
+          # echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
 
-    - name: Shard tests
-      run: |
-        # Invoke the shardinbg script passing result of previous call to shard the test cases
-        testShards=$(node .github/workflows/sharding.js <<< $(<test_data.json) 7)
-        echo "$testShards"
-        echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
-        # run specific playwright tests npx playwright test -g "add a todo item"
+      - name: Shard tests
+        run: |
+          # Invoke the shardinbg script passing result of previous call to shard the test cases
+          testShards=$(node .github/workflows/sharding.js <<< $(<test_data.json) 7)
+          echo "$testShards"
+          echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
+          # run specific playwright tests npx playwright test -g "add a todo item"
