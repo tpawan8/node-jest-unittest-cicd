@@ -68,5 +68,5 @@ jobs:
     - name: Shard tests
       run: |
         # Invoke the shardinbg script passing result of previous call to shard the test cases
-        testShards =$(node .github/workflows/sharding.js <<< ${{steps.get_test_data.outputs.test_suite}} 10*10^6)
+        testShards=$(node .github/workflows/sharding.js <<< ${{steps.get_test_data.outputs.test_suite}} 10*10^6)
         echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
