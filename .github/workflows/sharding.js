@@ -1,6 +1,7 @@
 function shardTests(tests, maxShardDuration) {
     console.log("tests: ");
     logObj(tests);
+    tests = JSON.parse(tests);
     console.log("maxShardDuration: "+ maxShardDuration);
     const shards = [];
     let currentShard = { tests: [], duration: 0 };
@@ -31,7 +32,7 @@ function shardTests(tests, maxShardDuration) {
   function logObj(obj)
   {
     console.log(JSON.stringify(obj));
-  }
+  } 
 
 const process = require('process')
 shardTests(process.argv[2], process.argv[3]);
