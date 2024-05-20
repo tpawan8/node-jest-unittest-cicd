@@ -58,13 +58,14 @@ jobs:
           echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
           # run specific playwright tests npx playwright test -g "add a todo item"
   playwright-tests:
+    needs: [build]
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1, 2]
+        shardTotal: [2]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -115,4 +116,3 @@ jobs:
         name: html-report--attempt-${{ github.run_attempt }}
         path: playwright-report
         retention-days: 14
-    
