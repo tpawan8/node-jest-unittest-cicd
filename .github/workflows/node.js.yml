@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      testShards: ${{ steps.shard_test_step.outputs.test_shards }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -48,18 +50,13 @@ jobs:
               }
             ]" > test_data.json
           cat test_data.json
-
-          # echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
       - name: Shard tests
         id: shard_test_step
         run: |
           # Invoke the shardinbg script passing result of previous call to shard the test cases
-          testShards=$(node .github/workflows/sharding.js "$(<test_data.json)" 7)
-          echo "$testShards"
-          test_shards_count=`echo "jq length testShards"`
-          echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
-          echo "test_shards_count=$testShards" >> "$GITHUB_OUTPUT" 
-          # run specific playwright tests npx playwright test -g "add a todo item"
+          test_Shard_data=$(node .github/workflows/sharding.js "$(<test_data.json)" 7)
+          echo "$test_Shard_data"
+          echo "test_shards=$test_Shard_data" >> $GITHUB_OUTPUTS.test_shards
   playwright-tests:
     # source: https://playwright.dev/docs/test-sharding
     needs: [build]
@@ -68,8 +65,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        testShard: ${{ fromJSON(jobs.build.steps.shard_tests_step.test_shards) }}
-        index: ${{ $(seq 1 jobs.build.steps.shard_tests_step.test_shards_count) }}
+        testShard: ${{ fromJSON(needs.build.outputs.testShards) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -87,7 +83,7 @@ jobs:
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@v4
         with:
-          name: blob-report-${{ matrix.shardIndex }}
+          name: blob-report-${{ matrix.testShard.index }}
           path: blob-report
           retention-days: 1
   merge-reports:
