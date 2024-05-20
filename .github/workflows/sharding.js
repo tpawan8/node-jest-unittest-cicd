@@ -1,4 +1,6 @@
 function shardTests(tests, maxShardDuration) {
+    console.log("tests: "+ tests);
+    console.log("maxShardDuration: "+ maxShardDuration);
     const shards = [];
     let currentShard = { tests: [], duration: 0 };
   
@@ -11,6 +13,7 @@ function shardTests(tests, maxShardDuration) {
       }
       currentShard.tests.push(test.test); // Store only the test name
       currentShard.duration += test.duration;
+      console.log("currentShard: "+ currentShard);
     }
   
     // Add the last shard if it has tests
