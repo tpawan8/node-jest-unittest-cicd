@@ -55,7 +55,6 @@ jobs:
         run: |
           # Invoke the shardinbg script passing result of previous call to shard the test cases
           test_Shard_data=$(node .github/workflows/sharding.js "$(<test_data.json)" 7)
-          echo "$test_Shard_data"
           echo "test_shards=$test_Shard_data" >> $GITHUB_OUTPUTS.test_shards
   playwright-tests:
     # source: https://playwright.dev/docs/test-sharding
