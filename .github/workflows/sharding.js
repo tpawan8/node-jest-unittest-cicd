@@ -1,8 +1,8 @@
 function shardTests(tests, maxShardDuration) {
-    console.log("tests: ");
+    //console.log("tests: ");
     logObj(tests);
     tests = JSON.parse(tests);
-    console.log("maxShardDuration: "+ maxShardDuration);
+    //console.log("maxShardDuration: "+ maxShardDuration);
     const shards = [];
     let currentShard = { tests: [], duration: 0 };
   
@@ -15,7 +15,7 @@ function shardTests(tests, maxShardDuration) {
       }
       currentShard.tests.push(test.test); // Store only the test name
       currentShard.duration += test.duration;
-      console.log("currentShard:");
+      //console.log("currentShard:");
       logObj(currentShard);
     }
   
@@ -24,14 +24,14 @@ function shardTests(tests, maxShardDuration) {
       shards.push(currentShard);
     }
     
-    console.log("shards");
+    //console.log("shards");
     logObj(shards);
     return shards;
   }
 
   function logObj(obj)
   {
-    console.log(JSON.stringify(obj));
+    //console.log(JSON.stringify(obj));
   } 
 
 const process = require('process')
