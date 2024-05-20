@@ -3,6 +3,7 @@ function shardTests(tests, maxShardDuration) {
     let currentShard = { tests: [], duration: 0 };
   
     for (const test of tests) {
+        console.log(test);
       const newDuration = currentShard.duration + test.duration;
       if (newDuration > maxShardDuration) {
         shards.push(currentShard);
