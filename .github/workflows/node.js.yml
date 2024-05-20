@@ -51,21 +51,25 @@ jobs:
 
           # echo "test_suite=[{\"test_name\": \"name_1\", \"time\": 5},{\"test_name\": \"name_2\", \"time\": 10}]" >> "$GITHUB_OUTPUT"  # Set output variable for next step
       - name: Shard tests
+        id: shard_test_step
         run: |
           # Invoke the shardinbg script passing result of previous call to shard the test cases
           testShards=$(node .github/workflows/sharding.js "$(<test_data.json)" 7)
           echo "$testShards"
+          test_shards_count=`echo "jq length testShards"`
           echo "test_shards=$testShards" >> "$GITHUB_OUTPUT" 
+          echo "test_shards_count=$testShards" >> "$GITHUB_OUTPUT" 
           # run specific playwright tests npx playwright test -g "add a todo item"
   playwright-tests:
+    # source: https://playwright.dev/docs/test-sharding
     needs: [build]
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2]
-        shardTotal: [2]
+        testShard: ${{ fromJSON(jobs.build.steps.shard_tests_step.test_shards) }}
+        index: ${{ $(seq 1 jobs.build.steps.shard_tests_step.test_shards_count) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -77,7 +81,7 @@ jobs:
         run: npx playwright install --with-deps
 
       - name: Run Playwright tests
-        run: npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npx playwright test -g ${{matrix.testShard.tests}}
 
       - name: Upload blob report to GitHub Actions Artifacts
         if: ${{ !cancelled() }}
